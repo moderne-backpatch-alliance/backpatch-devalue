@@ -2,6 +2,7 @@ import {
 	DevalueError,
 	enumerable_symbols,
 	get_type,
+	is_buffer,
 	is_plain_object,
 	is_primitive,
 	stringify_key,
@@ -291,7 +292,11 @@ function run(async, value, reducers) {
 				case 'BigInt64Array':
 				case 'BigUint64Array': {
 					/** @type {import("./types.js").TypedArray} */
-					const typedArray = thing;
+					let typedArray = thing;
+					// Node Buffers may share a pool containing unrelated, sensitive data.
+					// Copy only the visible bytes, without using Buffer's pooling or slice.
+					if (is_buffer(thing)) typedArray = new Uint8Array(thing);
+
 					str = '["' + type + '",' + flatten(typedArray.buffer);
 
 					// handle subarrays

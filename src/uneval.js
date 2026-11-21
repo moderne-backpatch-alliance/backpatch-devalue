@@ -3,6 +3,7 @@ import {
 	enumerable_symbols,
 	escaped,
 	get_type,
+	is_buffer,
 	is_plain_object,
 	is_primitive,
 	stringify_key,
@@ -98,7 +99,9 @@ export function uneval(value, replacer) {
 				case 'BigInt64Array':
 				case 'BigUint64Array':
 				case 'DataView':
-					walk(thing.buffer);
+					// A Node Buffer's backing store may be a shared pool. It must
+					// never be visited or hoisted just because a Buffer uses it.
+					if (!is_buffer(thing)) walk(thing.buffer);
 					return;
 
 				case 'ArrayBuffer':
@@ -287,6 +290,8 @@ export function uneval(value, replacer) {
 			case 'Float64Array':
 			case 'BigInt64Array':
 			case 'BigUint64Array': {
+				if (is_buffer(thing)) thing = new Uint8Array(thing);
+
 				let str = `new ${type}`;
 
 				if (!names.has(thing.buffer)) {
@@ -448,6 +453,8 @@ export function uneval(value, replacer) {
 				case 'Float64Array':
 				case 'BigInt64Array':
 				case 'BigUint64Array': {
+					if (is_buffer(thing)) thing = new Uint8Array(thing);
+
 					let str = `new ${type}`;
 
 					if (!names.has(thing.buffer)) {
