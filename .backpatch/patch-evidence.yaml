@@ -1,6 +1,6 @@
 schema: osera-patch-evidence/0.1.0
 producer: moderne
-release: 5.8.3-backpatch-00005
+release: 5.8.3-backpatch-00006
 baseline: v5.8.2+backpatch.baseline
 fixes:
   - cve: CVE-2026-81176
@@ -42,12 +42,28 @@ fixes:
     basis: adapted
     artifacts:
       - devalue
-    note: "New in this release; upstream's fix in 5.9.3, adapted to 5.8.2. It closes the advisory: devalue: Custom ArrayBuffer revivers can bypass typed-array allocation validation."
+    note: "Carried from 5.8.3-backpatch-00005; upstream's fix in 5.9.3, adapted to 5.8.2. It closes the advisory: devalue: Custom ArrayBuffer revivers can bypass typed-array allocation validation."
+  - cve: CVE-2026-123564
+    upstream_fix_url: https://github.com/sveltejs/devalue/commit/6861dbbb7e548849e48bce718e88747a298f7250
+    advisory_url: https://nvd.nist.gov/vuln/detail/CVE-2026-123564
+    patch_commit_url: https://github.com/moderne-backpatch-alliance/backpatch-devalue/commit/2eb9c87
+    basis: adapted
+    artifacts:
+      - devalue
+    note: "New in this release; upstream's fix in 5.9.3, adapted to 5.8.2. It closes the advisory: devalue: Sparse arrays emitted by uneval cause eager allocation when evaluated."
+  - cve: CVE-2026-123566
+    upstream_fix_url: https://github.com/sveltejs/devalue/commit/6861dbbb7e548849e48bce718e88747a298f7250
+    advisory_url: https://nvd.nist.gov/vuln/detail/CVE-2026-123566
+    patch_commit_url: https://github.com/moderne-backpatch-alliance/backpatch-devalue/commit/2eb9c87
+    basis: adapted
+    artifacts:
+      - devalue
+    note: "New in this release; upstream's fix in 5.9.3, adapted to 5.8.2. It closes the advisory: devalue: Residual sparse-array CPU amplification in uneval."
 tests:
-  commit: 50a40c8a9b508b2060e9db0cb339dd804c517285
+  commit: 2eb9c8717eea5d57032743009e40569659707a46
   command: pnpm 10.33.4 install --frozen-lockfile --ignore-scripts at the tag, pnpm run build, npm pack --ignore-scripts, then each of the tested commit's test/*.test.js and src/*.test.js run alone under node (uvu's direct mode) against the packed package, each test recorded into the JUnit report
   runtime: Node.js v22.23.2, pnpm 10.33.4, uvu 0.5.6, macOS 27.2 arm64
-  report: devalue-5.8.3-backpatch-00005-tests.zip
-  report_sha256: 22921d20cb9af4d3dd9aea069a93e3dac169d34c72f6a85860722c4ada5f4dee
+  report: devalue-5.8.3-backpatch-00006-tests.zip
+  report_sha256: 9068dfd6abbfd471e314139d5fc712cf30b334d28f8ff263d897c1b3da353f53
   result: pass
-  note: "upstream's uvu tests (test/*.test.js, src/*.test.js), each file run alone under node against the packed package at the tested commit: 852 tests, 852 passed, 0 failed, 0 skipped. The CVE tests (test/index.test.js), with this release's production lines reverted at the tested commit: 786 tests, 760 passed, 26 failed, 0 skipped, test files exiting non-zero: test/index.test.js; with them: 786 tests, 786 passed, 0 failed, 0 skipped. Built with pnpm run build (dts-buddy) in a directory named devalue, 8 of npmjs's 15 files for 5.8.2 are identical; the rest are README.md, package.json, src/parse.js, src/stringify.js, src/uneval.js, src/utils.js, types/index.d.ts.map. The archive's file-origins.yaml maps each packaged file to the commit, or names its inputs and build."
+  note: "upstream's uvu tests (test/*.test.js, src/*.test.js), each file run alone under node against the packed package at the tested commit: 866 tests, 866 passed, 0 failed, 0 skipped. The CVE tests (test/index.test.js), with this release's production lines reverted at the tested commit: 510 tests, 501 passed, 9 failed, 0 skipped, test files exiting non-zero: test/index.test.js; with them: 800 tests, 800 passed, 0 failed, 0 skipped. Built with pnpm run build (dts-buddy) in a directory named devalue, 8 of npmjs's 15 files for 5.8.2 are identical; the rest are README.md, package.json, src/parse.js, src/stringify.js, src/uneval.js, src/utils.js, types/index.d.ts.map. The archive's file-origins.yaml maps each packaged file to the commit, or names its inputs and build."
