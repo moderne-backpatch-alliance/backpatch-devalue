@@ -60,6 +60,10 @@ export function unflatten(parsed, revivers) {
 
 		if (index in hydrated) return hydrated[index];
 
+		if (index >= values.length) {
+			throw new Error(`Invalid input`);
+		}
+
 		const value = values[index];
 
 		if (!value || typeof value !== 'object') {
