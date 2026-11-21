@@ -1,6 +1,6 @@
 schema: osera-patch-evidence/0.1.0
 producer: moderne
-release: 5.8.3-backpatch-00003
+release: 5.8.3-backpatch-00004
 baseline: v5.8.2+backpatch.baseline
 fixes:
   - cve: CVE-2026-81176
@@ -26,12 +26,20 @@ fixes:
     basis: adapted
     artifacts:
       - devalue
-    note: "New in this release; upstream's fix in 5.9.3, adapted to 5.8.2. It closes the advisory: devalue: Malformed null-prototype object keys bypass __proto__ rejection via property-key coercion."
+    note: "Carried from 5.8.3-backpatch-00003; upstream's fix in 5.9.3, adapted to 5.8.2. It closes the advisory: devalue: Malformed null-prototype object keys bypass __proto__ rejection via property-key coercion."
+  - cve: CVE-2026-123562
+    upstream_fix_url: https://github.com/sveltejs/devalue/commit/dae8153e9d7541b975cc4018138d6cebec6c1199
+    advisory_url: https://nvd.nist.gov/vuln/detail/CVE-2026-123562
+    patch_commit_url: https://github.com/moderne-backpatch-alliance/backpatch-devalue/commit/0ed5072
+    basis: backport
+    artifacts:
+      - devalue
+    note: "New in this release; upstream's fix in 5.9.3. It closes the advisory: devalue: stringifyAsync can cause an unhandled rejection despite a caught returned promise."
 tests:
-  commit: 19cec09581cda77e358083aff76976e91794d3b7
+  commit: 0ed5072de4416038efa8198700d049b31d0cdc7a
   command: pnpm 10.33.4 install --frozen-lockfile --ignore-scripts at the tag, pnpm run build, npm pack --ignore-scripts, then each of the tested commit's test/*.test.js and src/*.test.js run alone under node (uvu's direct mode) against the packed package, each test recorded into the JUnit report
   runtime: Node.js v22.23.2, pnpm 10.33.4, uvu 0.5.6, macOS 27.2 arm64
-  report: devalue-5.8.3-backpatch-00003-tests.zip
-  report_sha256: 9bcb6078658463794c13de0008b94e8c1859873bd35ed2c25674640c208e522d
+  report: devalue-5.8.3-backpatch-00004-tests.zip
+  report_sha256: 05984f78a248a239ab0cca3b8f412686673784e4fbd8eb3312c481d747dc9fab
   result: pass
-  note: "upstream's uvu tests (test/*.test.js, src/*.test.js), each file run alone under node against the packed package at the tested commit: 792 tests, 792 passed, 0 failed, 0 skipped. The CVE tests (test/index.test.js), with this release's production lines reverted at the tested commit: 732 tests, 724 passed, 8 failed, 0 skipped, test files exiting non-zero: test/index.test.js; with them: 732 tests, 732 passed, 0 failed, 0 skipped. Built with pnpm run build (dts-buddy) in a directory named devalue, 8 of npmjs's 15 files for 5.8.2 are identical; the rest are README.md, package.json, src/parse.js, src/stringify.js, src/uneval.js, src/utils.js, types/index.d.ts.map. The archive's file-origins.yaml maps each packaged file to the commit, or names its inputs and build."
+  note: "upstream's uvu tests (test/*.test.js, src/*.test.js), each file run alone under node against the packed package at the tested commit: 798 tests, 798 passed, 0 failed, 0 skipped. The CVE tests (test/stringify-async.test.js), with this release's production lines reverted at the tested commit: 6 tests, 0 passed, 6 failed, 0 skipped, test files exiting non-zero: test/stringify-async.test.js; with them: 6 tests, 6 passed, 0 failed, 0 skipped. Built with pnpm run build (dts-buddy) in a directory named devalue, 8 of npmjs's 15 files for 5.8.2 are identical; the rest are README.md, package.json, src/parse.js, src/stringify.js, src/uneval.js, src/utils.js, types/index.d.ts.map. The archive's file-origins.yaml maps each packaged file to the commit, or names its inputs and build."
