@@ -11,6 +11,16 @@ import {
 } from './constants.js';
 import { is_valid_array_index, is_valid_array_len } from './utils.js';
 
+const array_buffer_byte_length = Object.getOwnPropertyDescriptor(
+	ArrayBuffer.prototype,
+	'byteLength'
+).get;
+
+const shared_array_buffer_byte_length =
+	typeof SharedArrayBuffer === 'undefined'
+		? undefined
+		: Object.getOwnPropertyDescriptor(SharedArrayBuffer.prototype, 'byteLength').get;
+
 /**
  * Revive a value serialized with `devalue.stringify`
  * @param {string} serialized
@@ -188,6 +198,16 @@ export function unflatten(parsed, revivers) {
 
 						const TypedArrayConstructor = globalThis[type];
 						const buffer = hydrate(value[1]);
+
+						// A reviver can return a length or array-like value instead of a buffer.
+						// The native getters check internal slots (cross-realm, unspoofable),
+						// so do not replace them with instanceof or Symbol.toStringTag checks.
+						try {
+							array_buffer_byte_length.call(buffer);
+						} catch (error) {
+							if (!shared_array_buffer_byte_length) throw error;
+							shared_array_buffer_byte_length.call(buffer);
+						}
 
 						hydrated[index] =
 							value[2] !== undefined
