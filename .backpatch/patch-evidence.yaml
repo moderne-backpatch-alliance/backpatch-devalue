@@ -1,0 +1,21 @@
+schema: osera-patch-evidence/0.1.0
+producer: moderne
+release: 5.8.3-backpatch-00001
+baseline: v5.8.2+backpatch.baseline
+fixes:
+  - cve: CVE-2026-81176
+    upstream_fix_url: https://github.com/sveltejs/devalue/commit/8b2a4562c446d7c36d9d629778079a5fae4243e1
+    advisory_url: https://nvd.nist.gov/vuln/detail/CVE-2026-81176
+    patch_commit_url: https://github.com/moderne-backpatch-alliance/backpatch-devalue/commit/94223af
+    basis: backport
+    artifacts:
+      - devalue
+    note: "New in this release; upstream's fix in 5.9.2. It closes the advisory: Svelte devalue: DoS via malformed input."
+tests:
+  commit: 94223afc70b8a9db8e838ac84d278c448ab95254
+  command: pnpm 10.33.4 install --frozen-lockfile --ignore-scripts at the tag, pnpm run build, npm pack --ignore-scripts, then each of the tested commit's test/*.test.js and src/*.test.js run alone under node (uvu's direct mode) against the packed package, each test recorded into the JUnit report
+  runtime: Node.js v22.23.2, pnpm 10.33.4, uvu 0.5.6, macOS 27.2 arm64
+  report: devalue-5.8.3-backpatch-00001-tests.zip
+  report_sha256: 6e7d0b54d909b0e614d86e400f242b8429348ebb7b6b291b5f15e5c3c513597f
+  result: pass
+  note: "upstream's uvu tests (test/*.test.js, src/*.test.js), each file run alone under node against the packed package at the tested commit: 745 tests, 745 passed, 0 failed, 0 skipped. The CVE tests (test/index.test.js), with this release's production lines reverted at the tested commit: 723 tests, 722 passed, 1 failed, 0 skipped, test files exiting non-zero: test/index.test.js; with them: 723 tests, 723 passed, 0 failed, 0 skipped. Built with pnpm run build (dts-buddy) in a directory named devalue, 13 of npmjs's 15 files for 5.8.2 are identical; the rest are package.json, src/parse.js. The archive's file-origins.yaml maps each packaged file to the commit, or names its inputs and build."
